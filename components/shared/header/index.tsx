@@ -12,7 +12,7 @@ export default function Header() {
     <header className='bg-black text-white'>
       <div className='px-2'>
         <div className='flex items-center justify-between'>
-          <div>
+          <div className='flex items-center'>
             <Link
               href='/'
               className='flex items-center header-button font-extrabold text-2xl m-1'>
@@ -34,7 +34,7 @@ export default function Header() {
           <Search />
         </div>
       </div>
-      <div className='flex items-center px-3 mb-[1px] bg-gray-800'>
+      <div className='px-3 flex items-center mb-[1px] bg-gray-800'>
         <Button
           variant='ghost'
           className='dark header-button flex items-center gap-1 text-base [&_svg]:size-6'>
