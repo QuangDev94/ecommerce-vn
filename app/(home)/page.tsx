@@ -1,6 +1,59 @@
+import HomeCards from '@/components/home/home-cards'
 import { HomeCarousel } from '@/components/home/home-carousel'
+import {
+  getAllCategories,
+  getProductsForCard,
+} from '@/lib/actions/product.actions'
 import data from '@/lib/data'
+import { toSlug } from '@/lib/utils'
 
 export default async function Page() {
-  return <HomeCarousel items={data.carousels} />
+  const categorise = (await getAllCategories()).slice(0, 4)
+  const newArrivals = await getProductsForCard({
+    tag: 'new-arrival',
+    limit: 4,
+  })
+  const featureds = await getProductsForCard({
+    tag: 'featured',
+    limit: 4,
+  })
+  const bestSellers = await getProductsForCard({
+    tag: 'best-seller',
+    limit: 4,
+  })
+  console.log('newArrivals', newArrivals)
+  const cards = [
+    {
+      title: 'Categories to explore',
+      link: { text: 'See more', href: '/search' },
+      items: categorise.map((category) => ({
+        name: category,
+        href: `/search?category=${category}`,
+        image: `/images/${toSlug(category)}.jpg`,
+      })),
+    },
+    {
+      title: 'Explore New Arrivals',
+      link: { text: 'View All', href: '/search?tag=new-arrival' },
+      items: newArrivals,
+    },
+    {
+      title: 'Discover Best Sellers',
+      link: { text: 'View All', href: '/search?tag=best-seller' },
+      items: bestSellers,
+    },
+    {
+      title: 'Featured Products',
+      link: { text: 'Shop Now', href: '/search?tag=featured' },
+      items: featureds,
+    },
+  ]
+  return (
+    <>
+      <HomeCarousel items={data.carousels} />
+      <div className='md:p-4 md:space-y-4 bg-border'>
+        <HomeCards cards={cards} />
+      </div>
+    </>
+  )
 }

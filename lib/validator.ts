@@ -1,6 +1,8 @@
 import { z } from 'zod'
 import { formatNumberWithDecimal } from './utils'
 
+// z.coerce.number() sẽ ép (coerce) dữ liệu đầu vào về số nếu có thể.
+// refine : Kiểm tra tùy chỉnh – giá trị phải có đúng 2 chữ số thập phân
 const Price = (field: string) =>
   z.coerce
     .number()
