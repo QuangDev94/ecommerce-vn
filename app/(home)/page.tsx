@@ -1,7 +1,10 @@
 import HomeCards from '@/components/home/home-cards'
 import { HomeCarousel } from '@/components/home/home-carousel'
+import ProductSlider from '@/components/product/product-slider'
+import { Card, CardContent } from '@/components/ui/card'
 import {
   getAllCategories,
+  getProductsByTag,
   getProductsForCard,
 } from '@/lib/actions/product.actions'
 import data from '@/lib/data'
@@ -21,7 +24,6 @@ export default async function Page() {
     tag: 'best-seller',
     limit: 4,
   })
-  console.log('newArrivals', newArrivals)
   const cards = [
     {
       title: 'Categories to explore',
@@ -48,11 +50,18 @@ export default async function Page() {
       items: featureds,
     },
   ]
+
+  const todaysDeals = await getProductsByTag({ tag: 'todays-deal' })
   return (
     <>
       <HomeCarousel items={data.carousels} />
       <div className='md:p-4 md:space-y-4 bg-border'>
         <HomeCards cards={cards} />
+        <Card className='w-full rounded-none'>
+          <CardContent className='p-4'>
+            <ProductSlider title={"Today's Deals"} products={todaysDeals} />
+          </CardContent>
+        </Card>
       </div>
     </>
   )

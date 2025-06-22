@@ -52,4 +52,5 @@ const Product =
   // Khởi tạo model mới tên "Product" từ productSchema, với kiểu dữ liệu IProduct.
   model<IProduct>('Product', productSchema)
 
+console.log('Product: ', Product)
 export default Product
