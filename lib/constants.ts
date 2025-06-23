@@ -4,3 +4,4 @@ export const APP_DESCRIPTION =
   'Ecommerce VN is a modern e-commerce platform built with Next.js and Tailwind CSS.'
 export const APP_SLOGAN =
   process.env.NEXT_PUBLIC_APP_SLOGAN || 'Shop the best products online'
+export const PAGE_SIZE = Number(process.env.PAGE_SIZE || 9)

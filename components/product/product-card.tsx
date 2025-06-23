@@ -18,7 +18,6 @@ const ProductCard = ({
   hideDetails?: boolean
   hideAddToCart?: boolean
 }) => {
-  console.log('product: ', product)
   const ProductImage = () => (
     <Link href={`/product/${product.slug}`}>
       <div className='relative h-52'>
