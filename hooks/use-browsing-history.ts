@@ -5,12 +5,12 @@ type BrowsingHistory = {
   products: { id: string; category: string }[]
 }
 
-const inittialState: BrowsingHistory = {
+const initialState: BrowsingHistory = {
   products: [],
 }
 
 export const browsingHistoryStore = create<BrowsingHistory>()(
-  persist(() => inittialState, {
+  persist(() => initialState, {
     name: 'browsingHistoryStore',
   }),
 )

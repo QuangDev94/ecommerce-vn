@@ -1,4 +1,8 @@
-import { ProductInputSchema } from '@/lib/validator'
+import {
+  CartSchema,
+  OrderItemSchema,
+  ProductInputSchema,
+} from '@/lib/validator'
 import { z } from 'zod'
 
 // z.infer<T> Đây là utility type của Zod.
@@ -20,3 +24,6 @@ export type Data = {
     isPublished: boolean
   }[]
 }
+
+export type OrderItem = z.infer<typeof OrderItemSchema>
+export type Cart = z.infer<typeof CartSchema>
