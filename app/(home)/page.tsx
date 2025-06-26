@@ -1,6 +1,7 @@
 import HomeCards from '@/components/home/home-cards'
 import { HomeCarousel } from '@/components/home/home-carousel'
 import ProductSlider from '@/components/product/product-slider'
+import BrowsingHistoryList from '@/components/shared/browsing-history-list'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   getAllCategories,
@@ -62,6 +63,9 @@ export default async function Page() {
             <ProductSlider title={"Today's Deals"} products={todaysDeals} />
           </CardContent>
         </Card>
+      </div>
+      <div className='p-4 bg-background'>
+        <BrowsingHistoryList />
       </div>
     </>
   )
