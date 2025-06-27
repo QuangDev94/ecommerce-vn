@@ -18,6 +18,7 @@ export const toSlug = (text: string): string => {
     .replace(/[^\w\s-]+/g, '') // Remove non-word characters except spaces and hyphens
     .replace(/\s+/g, '-') // Replace spaces with hyphens
     .replace(/^-+|-+$/g, '') // Remove leading and trailing hyphens
+    .replace(/-+/g, '-') // thay thế tất cả các cụm có từ một trở lên dấu - liên tiếp thành một dấu - duy nhất.
 }
 
 const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
