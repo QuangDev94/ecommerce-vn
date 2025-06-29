@@ -25,7 +25,7 @@ const ProductPrice = ({
 
   return plain ? (
     formatCurrency(price)
-  ) : listPrice == 0 ? (
+  ) : listPrice === 0 ? (
     <div className={cn('text-3xl', clasName)}>
       <span className='text-xs align-super'>$</span>
       {intValue}
