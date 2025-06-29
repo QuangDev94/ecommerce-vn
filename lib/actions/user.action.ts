@@ -15,7 +15,9 @@ export async function signInWithCredentials(user: IUserSignIn) {
     redirect: false,
   })
 }
-
+export const SignInWithGoogle = async () => {
+  await signIn('google')
+}
 export const signOutAction = async () => {
   const redirectTo = await signOut({ redirect: false })
   redirect(redirectTo.redirect)
@@ -23,7 +25,7 @@ export const signOutAction = async () => {
 
 export async function registerUser(userSignUp: IUserSignUp) {
   try {
-    // parseAsync dùng khi trong schema có thể chứa các validate bất đồng bộ như 
+    // parseAsync dùng khi trong schema có thể chứa các validate bất đồng bộ như
     // .refine(async (...)) hoặc dùng await bên trong schema.
     const user = await UserSignUpSchema.parseAsync({
       name: userSignUp.name,
