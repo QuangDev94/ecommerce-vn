@@ -41,6 +41,8 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { SubmitHandler, useForm } from 'react-hook-form'
 import CheckoutFooter from './checkout-footer'
+import { createOrder } from '@/lib/actions/order.actions'
+import { toast } from '@/hooks/use-toast'
 
 const shippingAddressDefaultValue =
   process.env.NODE_ENV === 'development'
@@ -86,6 +88,7 @@ const CheckoutForm = () => {
     setShippingAddress,
     setPaymentMethod,
     setDeliveryDateIndex,
+    clearCart,
   } = useCartStore()
   const isMounted = useIsMounted()
   // useForm<ShippingAddress>()
@@ -116,7 +119,27 @@ const CheckoutForm = () => {
   }, [isMounted, router, shippingAddress, shippingAddressForm])
 
   const handlePlaceOrder = async () => {
-    // Todo: place order
+    const res = await createOrder({
+      items,
+      shippingAddress,
+      expectedDeliveryDate: calculateFutureDate(
+        AVAILABLE_DELIVERY_DATES[deliveryDateIndex!].daysToDelivery,
+      ),
+      deliveryDateIndex,
+      paymentMethod,
+      itemsPrice,
+      shippingPrice,
+      taxPrice,
+      totalPrice,
+    })
+
+    if (!res.success) {
+      toast({ description: res.message, variant: 'destructive' })
+    } else {
+      toast({ description: res.message, variant: 'default' })
+      clearCart()
+      router.push(`/checkout/${res.data?.orderId}`)
+    }
   }
   const handleSelectPaymentMethod = () => {
     setIsAddressSelected(true)
@@ -209,7 +232,7 @@ const CheckoutForm = () => {
       </CardContent>
     </Card>
   )
-  
+
   return (
     <main className='max-w-6xl mx-auto highlight-link'>
       <div className='grid md:grid-cols-4 gap-6'>
