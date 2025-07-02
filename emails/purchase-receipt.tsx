@@ -61,11 +61,6 @@ PurchaseReceipEmail.PreviewProps = {
 } satisfies OrderInformationProps
 
 const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium' })
-console.log(
-  PurchaseReceipEmail.PreviewProps.order.items[0].image.startsWith('/')
-    ? `${SERVER_URL}${PurchaseReceipEmail.PreviewProps.order.items[0].image}`
-    : PurchaseReceipEmail.PreviewProps.order.items[0].image,
-)
 export default function PurchaseReceipEmail({ order }: OrderInformationProps) {
   return (
     <Html>

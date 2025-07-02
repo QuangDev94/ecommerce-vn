@@ -70,7 +70,7 @@ export async function createPaypalOrder(orderId: string) {
         id: paypalOrder.id,
         email_address: '',
         status: '',
-        pricePaid: '0',
+        pricePaid: '',
       }
       await order.save()
       return {
@@ -122,6 +122,7 @@ export async function approvePayPalOrder(
     }
   } catch (error) {
     return {
+      approvePayPalOrder: true,
       sussess: false,
       message: formatError(error),
     }

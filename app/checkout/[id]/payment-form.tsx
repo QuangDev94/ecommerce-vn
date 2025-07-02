@@ -63,6 +63,7 @@ export default function PaymentForm({
   }
   const handleApprovePayPalOrder = async (data: { orderID: string }) => {
     const res = await approvePayPalOrder(order._id, data)
+
     toast({
       description: res.message,
       variant: res.success ? 'default' : 'destructive',
@@ -132,8 +133,6 @@ export default function PaymentForm({
       </CardContent>
     </Card>
   )
-  console.log('isPaid: ', isPaid)
-  console.log(paymentMethod)
   return (
     <main className='max-w-6xl mx-auto'>
       <div className='grid md:grid-cols-4 gap-6'>
@@ -155,7 +154,7 @@ export default function PaymentForm({
           </div>
           {/* payment method */}
           <div className='border-y'>
-            <div className='gird md:grid-cols-3 py-3 pb-3'>
+            <div className='grid md:grid-cols-3 my-3 pb-3'>
               <div className='text-lg font-bold'>
                 <span>Payment Method</span>
               </div>
