@@ -23,7 +23,9 @@ export default function StripeForm({
   const [email, setEmail] = useState<string>()
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    if (stripe === null || elements === null || email === null) return
+
+    if (stripe == null || elements == null || email == null) return
+
     setIsLoading(true)
     stripe
       .confirmPayment({
@@ -36,7 +38,7 @@ export default function StripeForm({
         if (error.type === 'card_error' || error.type === 'validation_error') {
           setErrorMessage(error.message)
         } else {
-          setErrorMessage('An unknow error occurred')
+          setErrorMessage('An unknown error occurred')
         }
       })
       .finally(() => setIsLoading(false))

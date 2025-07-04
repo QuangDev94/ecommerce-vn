@@ -21,7 +21,7 @@ export default async function SuccessPage(props: {
     searchParams.payment_intent,
   )
   if (
-    paymentIntent.metadata.orderId === null ||
+    paymentIntent.metadata.orderId == null ||
     paymentIntent.metadata.orderId !== order._id.toString()
   ) {
     return notFound()
@@ -36,7 +36,7 @@ export default async function SuccessPage(props: {
           Thanks for your purchase
         </h1>
         <div>We are now processing your order.</div>
-        <Button>
+        <Button asChild>
           <Link href={`/account/orders/${id}`}>View order</Link>
         </Button>
       </div>

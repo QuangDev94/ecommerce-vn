@@ -18,9 +18,10 @@ export async function POST(req: NextRequest) {
     const email = charge.billing_details.email
     const pricePaidInCents = charge.amount
     const order = await Order.findById(orderId).populate('user', 'email')
-    if (order === null) {
+    if (order == null) {
       return new NextResponse('Bad Request', { status: 400 })
     }
+
     order.isPaid = true
     order.paidAt = new Date()
     order.paymentResult = {
@@ -32,8 +33,8 @@ export async function POST(req: NextRequest) {
     await order.save()
     try {
       await sendPurchaseReceipt({ order })
-    } catch (error) {
-      console.log(`email error`, error)
+    } catch (err) {
+      console.log('email error', err)
     }
     return NextResponse.json({
       message: 'updateOrderToPaid was successful',
