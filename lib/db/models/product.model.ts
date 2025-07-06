@@ -29,8 +29,6 @@ const productSchema = new Schema<IProduct>(
     ratingDistribution: [
       {
         rating: { type: Number, required: true },
-      },
-      {
         count: { type: Number, required: true },
       },
     ],

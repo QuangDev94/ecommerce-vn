@@ -3,6 +3,7 @@ import {
   OrderInputSchema,
   OrderItemSchema,
   ProductInputSchema,
+  ReviewInputSchema,
   ShippingAddressSchema,
   UserInputSchema,
   UserSignInSchema,
@@ -15,9 +16,22 @@ import { z } from 'zod'
 // Nói cách khác, nó giúp bạn chuyển một schema Zod thành kiểu TypeScript tương ứng.
 export type IProductInput = z.infer<typeof ProductInputSchema>
 
+export type IReviewInput = z.infer<typeof ReviewInputSchema>
+export type IReviewDetails = IReviewInput & {
+  _id: string
+  createdAt: string
+  user: {
+    name: string
+  }
+}
 export type Data = {
   users: IUserInput[]
   products: IProductInput[]
+  reviews: {
+    title: string
+    comment: string
+    rating: number
+  }[]
   headerMenus: {
     name: string
     href: string

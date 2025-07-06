@@ -2,10 +2,10 @@ import AddToBrowsingHistory from '@/components/product/add-to-browsing-history'
 import ProductGallery from '@/components/product/product-gallery'
 import ProductPrice from '@/components/product/product-price'
 import ProductSlider from '@/components/product/product-slider'
-import Rating from '@/components/product/rating'
 import SelectVariant from '@/components/product/select-variant'
 import BrowsingHistoryList from '@/components/shared/browsing-history-list'
 import AddToCart from '@/components/shared/product/add-to-card'
+import RatingSummary from '@/components/shared/product/rating-summary'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -13,6 +13,8 @@ import {
   getRelatedProductsByCategory,
 } from '@/lib/actions/product.actions'
 import { generateId, round2 } from '@/lib/utils'
+import ReviewList from './review-list'
+import { auth } from '@/auth'
 
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>
@@ -43,7 +45,7 @@ export default async function ProductDetails(props: {
     productId: product._id,
     page: Number(page || '1'),
   })
-
+  const session = await auth()
   return (
     <div>
       <AddToBrowsingHistory id={product._id} category={product.category} />
@@ -59,9 +61,12 @@ export default async function ProductDetails(props: {
               </p>
               <h1 className='font-bold text-lg lg:text-xl'>{product.name}</h1>
               <div className='flex items-center gap-2'>
-                <span>{product.avgRating.toFixed(1)}</span>
-                <Rating rating={product.avgRating} />
-                <span>{product.numReviews} ratings</span>
+                <RatingSummary
+                  asPopover
+                  avgRating={product.avgRating}
+                  numReviews={product.numReviews}
+                  ratingDistribution={product.ratingDistribution}
+                />
               </div>
               <Separator />
               <div className='flex flex-col gap-3 sm:flex-row sm:items-center'>
@@ -126,6 +131,12 @@ export default async function ProductDetails(props: {
           </div>
         </div>
       </section>
+      <div className='section mt-10'>
+        <h2 className='h2-bold mb-2' id='reviews'>
+          Customer Reviews
+        </h2>
+        <ReviewList product={product} userId={session?.user.id} />
+      </div>
       <section className='mt-10'>
         <ProductSlider
           products={relatedProducts.data}
