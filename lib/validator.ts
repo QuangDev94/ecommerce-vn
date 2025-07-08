@@ -152,6 +152,9 @@ const Password = z
   .min(3, { message: 'Password must be at least 3 characters' })
 const UserRole = z.string().min(1, { message: 'UserRole is required' })
 
+export const UserNameSchema = z.object({
+  name: UserName,
+})
 export const UserInputSchema = z.object({
   name: UserName,
   email: Email,

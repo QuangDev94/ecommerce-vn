@@ -1,7 +1,7 @@
 'use server'
 
-import { signIn, signOut } from '@/auth'
-import { IUserSignIn, IUserSignUp } from '@/types'
+import { auth, signIn, signOut } from '@/auth'
+import { IUserName, IUserSignIn, IUserSignUp } from '@/types'
 import { redirect } from 'next/navigation'
 import { formatError } from '../utils'
 import { UserSignUpSchema } from '../validator'
@@ -41,5 +41,22 @@ export async function registerUser(userSignUp: IUserSignUp) {
     return { success: true, message: 'User created successfully!' }
   } catch (error) {
     return { success: false, error: formatError(error) }
+  }
+}
+export async function updateUserName(userName: IUserName) {
+  try {
+    const session = await auth()
+    await connectToDatabase()
+    const currentUser = await User.findById(session?.user?.id)
+    if (!currentUser) throw new Error('User not found')
+    currentUser.name = userName.name
+    const updatedUserName = await currentUser.save()
+    return {
+      success: true,
+      message: 'User updated successfully',
+      data: JSON.parse(JSON.stringify(updatedUserName)),
+    }
+  } catch (error) {
+    return { success: false, message: formatError(error) }
   }
 }
