@@ -3,6 +3,7 @@
 import useCartSizebar from '@/hooks/use-cart-sizebar'
 import CartSidebar from './cart-sidebar'
 import { Toaster } from '../ui/toaster'
+import { ThemeProvider } from './theme-provider'
 
 export default function ClientProviders({
   children,
@@ -12,7 +13,7 @@ export default function ClientProviders({
   const isCartSideBarOpen = useCartSizebar()
 
   return (
-    <>
+    <ThemeProvider attribute='class' defaultTheme='system'>
       {isCartSideBarOpen ? (
         <div className='flex min-h-screen'>
           <div className='flex-1 overflow-hidden'>{children}</div>
@@ -22,6 +23,6 @@ export default function ClientProviders({
         <div>{children}</div>
       )}
       <Toaster />
-    </>
+    </ThemeProvider>
   )
 }
