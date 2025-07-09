@@ -49,7 +49,9 @@ export default function AddToCart({
             description: error.message,
           })
         }
-      }}></Button>
+      }}>
+      Add to Cart
+    </Button>
   ) : (
     <div className='w-full space-y-2'>
       <Select
