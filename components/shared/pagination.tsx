@@ -42,7 +42,8 @@ const Pagination = ({ page, totalPages, urlParamName }: PaginationProps) => {
         disabled={Number(page) >= totalPages}
         className='w-24'
         onClick={() => handleClick('next')}>
-        <ChevronRight /> Next
+        Next
+        <ChevronRight />
       </Button>
     </div>
   )

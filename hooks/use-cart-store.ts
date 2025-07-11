@@ -65,12 +65,16 @@ const useCartStore = create(
             })),
           },
         })
-        return updatedCardItems.find(
+        const foundItem = updatedCardItems.find(
           (x) =>
             x.product === item.product &&
             x.color === item.color &&
             x.size === item.size,
-        )?.clientId
+        )
+        if (!foundItem) {
+          throw new Error('Item not found in cart')
+        }
+        return foundItem.clientId
       },
       updateItem: async (item: OrderItem, quantity: number) => {
         const { items, shippingAddress } = get().cart
