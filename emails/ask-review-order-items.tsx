@@ -1,8 +1,6 @@
-import { SERVER_URL } from '@/lib/constants'
-import { IOrder } from '../lib/db/models/order.model.ts'
-import { formatCurrency } from '@/lib/utils'
 import {
   Body,
+  Button,
   Column,
   Container,
   Head,
@@ -17,12 +15,17 @@ import {
   Text,
 } from '@react-email/components'
 
+import { formatCurrency } from '@/lib/utils'
+import { IOrder } from '@/lib/db/models/order.model'
+import { SERVER_URL } from '@/lib/constants'
+
 type OrderInformationProps = {
   order: IOrder
 }
-PurchaseReceipEmail.PreviewProps = {
+
+AskReviewOrderItemsEmail.PreviewProps = {
   order: {
-    _id: '1234',
+    _id: '123',
     isPaid: true,
     paidAt: new Date(),
     totalPrice: 100,
@@ -30,11 +33,11 @@ PurchaseReceipEmail.PreviewProps = {
     taxPrice: 0,
     shippingPrice: 0,
     user: {
-      name: 'Quang Dev',
-      email: 'qagnguyen.dev@gmail.com',
+      name: 'John Doe',
+      email: 'john.doe@example.com',
     },
     shippingAddress: {
-      fullName: 'QuangDev',
+      fullName: 'John Doe',
       street: '123 Main St',
       city: 'New York',
       postalCode: '12345',
@@ -55,33 +58,34 @@ PurchaseReceipEmail.PreviewProps = {
         countInStock: 10,
       },
     ],
-    paymentMethod: 'Paypal',
+    paymentMethod: 'PayPal',
     expectedDeliveryDate: new Date(),
     isDelivered: true,
   } as IOrder,
 } satisfies OrderInformationProps
-
 const dateFormatter = new Intl.DateTimeFormat('en', { dateStyle: 'medium' })
-export default function PurchaseReceipEmail({ order }: OrderInformationProps) {
+
+export default async function AskReviewOrderItemsEmail({
+  order,
+}: OrderInformationProps) {
   return (
     <Html>
-      <Preview>View order receipt</Preview>
+      <Preview>Review Order Items</Preview>
       <Tailwind>
         <Head />
         <Body className='font-sans bg-white'>
-          {/* max-width: 36rem; 576px */}
           <Container className='max-w-xl'>
-            <Heading>Purchase Receipt</Heading>
+            <Heading>Review Order Items</Heading>
             <Section>
               <Row>
                 <Column>
-                  <Text className='mb-0 mr-4 text-gray-500 whitespace-nowrap text-nowrap'>
-                    OrderId
+                  <Text className='mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4'>
+                    Order ID
                   </Text>
                   <Text className='mt-0 mr-4'>{order._id.toString()}</Text>
                 </Column>
                 <Column>
-                  <Text className='mb-0 mr-4 text-gray-500 whitespace-nowrap text-nowrap'>
+                  <Text className='mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4'>
                     Purchased On
                   </Text>
                   <Text className='mt-0 mr-4'>
@@ -89,7 +93,7 @@ export default function PurchaseReceipEmail({ order }: OrderInformationProps) {
                   </Text>
                 </Column>
                 <Column>
-                  <Text className='mb-0 mr-4 text-gray-500 whitespace-nowrap text-nowrap'>
+                  <Text className='mb-0 text-gray-500 whitespace-nowrap text-nowrap mr-4'>
                     Price Paid
                   </Text>
                   <Text className='mt-0 mr-4'>
@@ -100,7 +104,7 @@ export default function PurchaseReceipEmail({ order }: OrderInformationProps) {
             </Section>
             <Section className='border border-solid border-gray-500 rounded-lg p-4 md:p-6 my-4'>
               {order.items.map((item) => (
-                <Row key={item.product} className='mt-4'>
+                <Row key={item.product} className='mt-8'>
                   <Column className='w-20'>
                     <Link href={`${SERVER_URL}/product/${item.slug}`}>
                       <Img
@@ -117,13 +121,15 @@ export default function PurchaseReceipEmail({ order }: OrderInformationProps) {
                   </Column>
                   <Column className='align-top'>
                     <Link href={`${SERVER_URL}/product/${item.slug}`}>
-                      <Text className='mx-2 my-0'>
-                        {item.name} x {item.quantity}
-                      </Text>
+                      <Text className='mx-2 my-0'>{item.name}</Text>
                     </Link>
                   </Column>
-                  <Column align='right' className='align-top'>
-                    <Text className='m-0'>{formatCurrency(item.price)}</Text>
+                  <Column align='right' className='align-top '>
+                    <Button
+                      href={`${SERVER_URL}/product/${item.slug}#reviews`}
+                      className='text-center bg-blue-500 hover:bg-blue-700 text-white   py-2 px-4 rounded'>
+                      Review this product
+                    </Button>
                   </Column>
                 </Row>
               ))}
@@ -131,12 +137,12 @@ export default function PurchaseReceipEmail({ order }: OrderInformationProps) {
                 { name: 'Items', price: order.itemsPrice },
                 { name: 'Tax', price: order.taxPrice },
                 { name: 'Shipping', price: order.shippingPrice },
-                { name: 'TotalPrice', price: order.totalPrice },
-              ].map((item) => (
-                <Row key={item.name} className='py-1'>
-                  <Column align='right'>{item.name} :</Column>
-                  <Column align='right' width={90} className='align-top'>
-                    <Text className='m-0'>{formatCurrency(item.price)}</Text>
+                { name: 'Total', price: order.totalPrice },
+              ].map(({ name, price }) => (
+                <Row key={name} className='py-1'>
+                  <Column align='right'>{name}:</Column>
+                  <Column align='right' width={70} className='align-top'>
+                    <Text className='m-0'>{formatCurrency(price)}</Text>
                   </Column>
                 </Row>
               ))}
