@@ -4,12 +4,13 @@ import { auth, signIn, signOut } from '@/auth'
 import { IUserName, IUserSignIn, IUserSignUp } from '@/types'
 import { redirect } from 'next/navigation'
 import { formatError } from '../utils'
-import { UserSignUpSchema } from '../validator'
+import { UserSignUpSchema, UserUpdateSchema } from '../validator'
 import { connectToDatabase } from '../db'
 import bcrypt from 'bcryptjs'
 import User, { IUser } from '../db/models/user.model'
 import { revalidatePath } from 'next/cache'
 import { PAGE_SIZE } from '../constants'
+import { z } from 'zod'
 // GET
 export async function getAllUsers({
   limit,
@@ -60,7 +61,6 @@ export const signOutAction = async () => {
   const redirectTo = await signOut({ redirect: false })
   redirect(redirectTo.redirect)
 }
-
 export async function registerUser(userSignUp: IUserSignUp) {
   try {
     // parseAsync dùng khi trong schema có thể chứa các validate bất đồng bộ như
@@ -97,4 +97,30 @@ export async function updateUserName(userName: IUserName) {
   } catch (error) {
     return { success: false, message: formatError(error) }
   }
+}
+export async function updateUser(user: z.infer<typeof UserUpdateSchema>) {
+  try {
+    await connectToDatabase()
+    const dbUser = await User.findById(user._id)
+    if (!dbUser) throw new Error('User not found')
+    dbUser.name = user.name
+    dbUser.email = user.email
+    dbUser.role = user.role
+    const updatedUser = await dbUser.save()
+    revalidatePath('/admin/users')
+    return {
+      success: true,
+      message: 'User updated successfully',
+      data: JSON.parse(JSON.stringify(updatedUser)),
+    }
+  } catch (error) {
+    return { success: false, message: formatError(error) }
+  }
+}
+
+export async function getUserById(userId: string) {
+  await connectToDatabase()
+  const user = await User.findById(userId)
+  if (!user) throw new Error('User not found')
+  return JSON.parse(JSON.stringify(user)) as IUser
 }
