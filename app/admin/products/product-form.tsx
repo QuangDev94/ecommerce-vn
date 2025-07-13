@@ -159,7 +159,7 @@ const ProductForm = ({
                   <div className='relative'>
                     <Input
                       placeholder='Enter product slug'
-                      className='pl-8'
+                      className='pl-8 truncate'
                       {...field}
                     />
                     <button
@@ -167,7 +167,7 @@ const ProductForm = ({
                       onClick={() => {
                         form.setValue('slug', toSlug(form.getValues('name')))
                       }}
-                      className='absolute right-2 top-2.5'>
+                      className='absolute right-2 top-10 text-primary hover:font-bold'>
                       Generate
                     </button>
                   </div>

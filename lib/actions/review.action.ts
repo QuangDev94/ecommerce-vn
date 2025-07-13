@@ -106,6 +106,7 @@ export async function getReviews({
   const skipAmount = (page - 1) * limit
   await connectToDatabase()
   const reviews = await Review.find({ product: productId })
+    // populate user details (đây là join(liên kết) với collection(bảng) Users)
     .populate('user', 'name')
     .sort({
       createdAt: 'desc',

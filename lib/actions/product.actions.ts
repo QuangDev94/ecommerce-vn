@@ -46,7 +46,7 @@ export async function getProductById(productId: string) {
 }
 export async function getAllCategories() {
   await connectToDatabase()
-
+  // distinct: Trả về các giá trị duy nhất của trường 'category' trong các sản phẩm.
   const categories = await Product.find({ isPublished: true }).distinct(
     'category',
   )
@@ -63,13 +63,22 @@ export async function getProductsForCard({
 }) {
   await connectToDatabase()
   const products = await Product.find(
+    // Điều kiện lọc (filter)
     {
+      // Tìm kiếm sản phẩm có tag nhất định
+      // $in: tìm kiếm trong mảng tags của sản phẩm.
       tags: { $in: [tag] },
       isPublished: true,
     },
+    // Chỉ lấy các trường cần thiết (projection)
     {
+      // lấy trường name
       name: 1,
+      // lấy slug để tạo đường dẫn href
+      // nối chuỗi '/product/' với slug của sản phẩm.
       href: { $concat: ['/product/', '$slug'] },
+      // tạo trường image
+      // lấy ảnh đầu tiên trong mảng images của sản phẩm.
       image: { $arrayElemAt: ['$images', 0] },
     },
   )
@@ -225,8 +234,15 @@ export async function getAllProducts({
   }
 }
 export async function getAllTags() {
+  // Aggregation giống như một dây chuyền: dữ liệu đi qua từng bước (stage) để được xử lý, lọc,
+  // tính toán, rồi cho ra kết quả cuối cùng.
+  // tất cả trong một chuỗi các bước gọi là pipeline (đường ống xử lý).
   const tags = await Product.aggregate([
+    // $unwind sẽ tách từng phần tử trong mảng tags thành các document riêng biệt, giúp xử lý từng tag riêng lẻ.
     { $unwind: '$tags' },
+    // $group sẽ nhóm các document lại theo trường tags, và tạo một mảng chứa tất cả các tag duy nhất.
+    // _id: null: không nhóm theo trường nào, chỉ cần một mảng duy nhất.
+    // $addToSet: tạo một mảng chứa các giá trị duy nhất của trường tags.
     {
       $group: { _id: null, uniqueTags: { $addToSet: '$tags' } },
     },
@@ -237,10 +253,15 @@ export async function getAllTags() {
 
   return (
     (tags[0]?.uniqueTags
+      // sắp xếp các tag theo thứ tự chữ cái
       .sort((a: string, b: string) => a.localeCompare(b))
+      // chuyển đổi từng tag thành dạng title case (chữ cái đầu tiên viết hoa)
+      // ví dụ: 'new-arrival' -> 'New Arrival'
       .map((x: string) =>
         x
           .split('-')
+          // chuyển đổi từng từ trong tag thành chữ hoa chữ cái đầu tiên
+          // slice(1): lấy phần còn lại của từ sau chữ cái đầu tiên
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
           .join(' '),
       ) as string[]) || []
@@ -262,6 +283,7 @@ export async function deleteProduct(id: string) {
   }
 }
 // GET ALL PRODUCTS FOR ADMIN
+// Lấy danh sách sản phẩm với tính năng tìm kiếm bằng name, phân trang và sắp xếp
 export async function getAllProductsForAdmin({
   query,
   page = 1,
@@ -276,16 +298,21 @@ export async function getAllProductsForAdmin({
   await connectToDatabase()
 
   const pageSize = limit || PAGE_SIZE
+  // Tìm kiếm sản phẩm theo tên(name)
   const queryFilter =
     query && query !== 'all'
       ? {
           name: {
+            // dùng biểu thức chính quy để tìm sản phẩm chứa từ khóa.
+            // $regex: tìm kiếm theo mẫu (pattern) trong chuỗi.
+            // Tìm kiếm theo tên sản phẩm như: "Áo" sẽ khớp với "áo thun", "ÁO KHOÁC", v.v.
             $regex: query,
+            // tìm không phân biệt chữ hoa/thường (insensitive).
             $options: 'i',
           },
         }
       : {}
-
+  // khai báo kiểu của order rõ ràng — là object có key là string, value là 1 hoặc -1.
   const order: Record<string, 1 | -1> =
     sort === 'best-selling'
       ? { numSales: -1 }
@@ -295,14 +322,14 @@ export async function getAllProductsForAdmin({
           ? { price: -1 }
           : sort === 'avg-customer-review'
             ? { avgRating: -1 }
-            : { _id: -1 }
+            : { _id: -1 } // Mặc định sắp xếp theo ngày tạo mới nhất (latest).
   const products = await Product.find({
     ...queryFilter,
   })
     .sort(order)
     .skip(pageSize * (Number(page) - 1))
     .limit(pageSize)
-    .lean()
+    .lean() //Trả về plain JavaScript object thay vì mongoose document (nhẹ hơn, không có hàm .save()…)
 
   const countProducts = await Product.countDocuments({
     ...queryFilter,

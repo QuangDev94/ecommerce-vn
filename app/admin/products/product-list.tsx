@@ -34,15 +34,22 @@ const ProductList = () => {
   const [page, setPage] = useState<number>(1)
   const [inputValue, setInputValue] = useState<string>('')
   const [data, setData] = useState<ProductListDataProps>()
+  // xử lý các "transition updates" (cập nhật chuyển tiếp)
+  // Trong React, khi bạn cập nhật state, React sẽ tái render lại component.
+  // Nếu việc cập nhật đó tốn thời gian (ví dụ: render danh sách lớn), giao diện có thể bị "đơ".
+  // useTransition cho phép bạn đánh dấu một phần cập nhật là "ít quan trọng hơn" (non-urgent),
+  // để React ưu tiên các cập nhật khẩn cấp (ví dụ: click, nhập liệu) trước.
   const [isPending, startTransition] = useTransition()
 
   const handlePageChange = (changeType: 'next' | 'prev') => {
+    //cập nhật khẩn cấp (urgent) — phản hồi ngay lập tức với người dùng.
     const newPage = changeType === 'next' ? page + 1 : page - 1
     if (changeType === 'next') {
       setPage(newPage)
     } else {
       setPage(newPage)
     }
+    // cập nhật chuyển tiếp — được chạy trong startTransition()
     startTransition(async () => {
       const data = await getAllProductsForAdmin({
         query: inputValue,
@@ -54,9 +61,15 @@ const ProductList = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
+    // cập nhật khẩn cấp (urgent)
     setInputValue(value)
     if (value) {
+      // cập nhật chuyển tiếp
       clearTimeout((window as any).debounce)
+      // Tạo delay 500ms sau lần gõ cuối cùng mới gọi API.
+      // tạo (hoặc truy cập) một thuộc tính tùy ý trên window tên là debounce
+      // Mục đích: dùng để lưu trữ ID của timeout đã tạo bằng setTimeout.
+      // Dùng useRef() (tốt hơn trong React)
       ;(window as any).debounce = setTimeout(() => {
         startTransition(async () => {
           const data = await getAllProductsForAdmin({ query: value, page: 1 })

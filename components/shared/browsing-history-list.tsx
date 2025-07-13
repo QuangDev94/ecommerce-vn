@@ -1,4 +1,5 @@
 'use client'
+
 import useBrowsingHistory from '@/hooks/use-browsing-history'
 import { Separator } from '../ui/separator'
 import { cn } from '@/lib/utils'
@@ -13,7 +14,7 @@ export default function BrowsingHistoryList({
   const { products } = useBrowsingHistory()
   return (
     products.length !== 0 && (
-      <div className='bg-background'>
+      <div className='bg-background' id='browsing-history'>
         <Separator className={cn('mb-4', className)} />
         <ProductList
           title="Related to items that you've viewed"
